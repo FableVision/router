@@ -14,11 +14,10 @@
         "noImplicitThis": true,
     },
     "includes": [
-        "./src/*"
+        "./src/index.ts"
     ],
     // having to exclude here is silly, tsc shouldn't even be looking in here
     "exclude": [
-        "examples/*",
         "dist/*",
     ]
 }

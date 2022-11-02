@@ -1,4 +1,5 @@
-import { history } from './History';
+import { DoubleEvent } from '@fablevision/utils';
+import { History, history } from './History';
 
 export interface RouterOptions
 {
@@ -36,14 +37,24 @@ export class Router
     **/
     routes: RoutesHash;
 
-    constructor(options?: RouterOptions)
+    public routeEvent: DoubleEvent<string, string[]>;
+
+    /**
+     * For injecting history instances for unit testing.
+     */
+    private static injectedHistory: History|null = null;
+
+    private history: History;
+
+    constructor(options: RouterOptions = {})
     {
+        this.history = Router.injectedHistory || history;
         this.routes = {};
-        options || (options = {});
         this.preinitialize(options);
         if (options.routes) this.routes = options.routes;
         this._bindRoutes();
         this.initialize(options);
+        this.routeEvent = new DoubleEvent();
     }
 
     /**
@@ -78,10 +89,15 @@ export class Router
             callback = name;
             name = '';
         }
-        history.route(route, (fragment) =>
+        if (!callback) callback = (this as any)[name];
+        this.history.route(route, (fragment) =>
         {
             var args = this._extractParameters(route as RegExp, fragment);
-            this.execute(callback!, args, name as string);
+            if (this.execute(callback!, args, name as string) !== false)
+            {
+                this.routeEvent.emit(name as string, args);
+                this.history.routeEvent.emit(this, name as string, args);
+            }
         });
         return this;
     }
@@ -91,15 +107,16 @@ export class Router
     navigate(fragment: string, trigger?: boolean): Router;
     navigate(fragment: string, options?: NavigateOptions|boolean)
     {
-        history.navigate(fragment, options);
+        this.history.navigate(fragment, options);
         return this;
     }
 
     // Execute a route handler with the provided parameters.  This is an
     // excellent place to do pre-route setup or post-route cleanup.
-    execute(callback: Function, args: any[], name: string): void
+    execute(callback: Function, args: any[], name: string): boolean
     {
         if (callback) callback.apply(this, args);
+        return true;
     }
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the

@@ -3,3 +3,8 @@ node_modules
 desktop.ini
 /dist
 RECOVER_*.fla
+/index.js
+/index.js.map
+/test/test.js
+/test/test.js.map
+.parcel-cache

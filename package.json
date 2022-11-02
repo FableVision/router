@@ -7,11 +7,27 @@
     "build": "tsc",
     "prepublish": "npm run build",
     "prepare": "npm run build",
-    "postpublish": "git push && git push --tags"
+    "postpublish": "git push && git push --tags",
+    "pretest": "parcel build src/test.ts --no-optimize",
+    "test": "karma start"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "karma": "^6.3.11",
+    "karma-chrome-launcher": "^3.1.1",
+    "karma-firefox-launcher": "^2.1.2",
+    "karma-qunit": "^4.1.2",
+    "parcel": "^2.7.0",
+    "qunit": "^2.19.3",
     "typescript": "^4.8.4"
+  },
+  "targets": {
+    "default": {
+      "distDir": "./test"
+    }
+  },
+  "dependencies": {
+    "@fablevision/utils": "^1.2.3"
   }
 }

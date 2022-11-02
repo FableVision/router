@@ -1,3 +1,6 @@
+import { MultiEvent } from '@fablevision/utils';
+import type { Router } from './Router';
+
 export interface HistoryOptions
 {
     pushState?: boolean;
@@ -28,6 +31,8 @@ export class History //extends EventsMixin implements Events
     // twenty times a second.
     interval: number = 50;
 
+    public routeEvent: MultiEvent<[Router, string, string[]]>
+
     options: any;
     static started: boolean;
     private location!: Location;
@@ -47,6 +52,7 @@ export class History //extends EventsMixin implements Events
     {
         this.handlers = [];
         this.checkUrl = this.checkUrl.bind(this);
+        this.routeEvent = new MultiEvent();
 
         // Ensure that `History` can be used outside of the browser.
         if (typeof window !== 'undefined')
@@ -131,7 +137,7 @@ export class History //extends EventsMixin implements Events
         }
         else if (this._wantsHashChange)
         {
-            this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
+            this._checkUrlInterval = setInterval(this.checkUrl, this.interval) as any;
         }
 
         if (!this.options.silent) return this.loadUrl();
@@ -145,7 +151,7 @@ export class History //extends EventsMixin implements Events
      */
     getHash(window?: Window): string
     {
-        var match = (window! || this).location.href.match(/#(.*)$/);
+        var match = ((window! || this) as {location: Location}).location.href.match(/#(.*)$/);
         return match ? match[1] : '';
     }
 
@@ -291,6 +297,7 @@ export class History //extends EventsMixin implements Events
                 handler.callback(fragmentOverride!);
                 return true;
             }
+            return false;
         });
     }
 
