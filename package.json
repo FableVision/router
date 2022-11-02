@@ -1,7 +1,7 @@
 {
   "name": "@fablevision/router",
   "version": "1.0.0",
-  "description": "A standalone version of Backbone JS's Router class, simplified to modern-ish ES6 with no dependencies.",
+  "description": "A standalone version of Backbone JS's Router class, simplified to modern-ish ES6.",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
@@ -10,6 +10,12 @@
     "postpublish": "git push && git push --tags",
     "pretest": "parcel build src/test.ts --no-optimize",
     "test": "karma start"
+  },
+  "files": [
+    "dist/"
+  ],
+  "repository": {
+    "url": "https://github.com/FableVision/router"
   },
   "author": "",
   "license": "MIT",
